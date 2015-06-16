@@ -6,6 +6,8 @@ public class ImpLayer extends Object {
     public final View background;
 
     public boolean clipsToBounds;
+
+    public static int cursorBlinkRate = 530;
     
     public ImpLayer(PApplet app, int x, int y, int width, int height){
         this.app = app;
@@ -56,30 +58,39 @@ public class ImpLayer extends Object {
     // PApplet Helpers
     // ------------------
 
-    public void rect(View v){
-        if (v != null){
-            Frame frameToDraw = new Frame(v.frame);
-
+    private Frame layerCroppedFrame(Frame frame){
+        if (frame != null){
+            Frame cropped = new Frame(frame);
+            cropped.x += this.layerFrame.x;
+            cropped.y += this.layerFrame.y;
             if (this.clipsToBounds){
-                if (!this.layerFrame.containsFrame(frameToDraw)) {
-                    frameToDraw.cropToFit(this.layerFrame);
+                if (!this.layerFrame.containsFrame(cropped)) {
+                    cropped.cropToFit(this.layerFrame);
                 }
             }
-            
-            this.app.rect(this.layerFrame.x + frameToDraw.x, this.layerFrame.y + frameToDraw.y, frameToDraw.width, frameToDraw.height);            
+            return cropped;
+        }
+        return new Frame(0,0,0,0);
+    }
+
+    public void rect(Frame frame){
+        if (frame != null){
+            Frame cropped = layerCroppedFrame(frame);
+            this.app.rect(cropped.x, 
+                cropped.y, 
+                cropped.width, 
+                cropped.height);            
         }
     }
 
-    public void text(Label l) {
-        if (l != null){
-            Frame frameToDraw = new Frame(l.frame);
-
-            if (this.clipsToBounds){
-                if (!this.layerFrame.containsFrame(frameToDraw)) {
-                    frameToDraw.cropToFit(this.layerFrame);
-                }
-            }
-            this.app.text(l.text, this.layerFrame.x + frameToDraw.x, this.layerFrame.y + frameToDraw.y, frameToDraw.width, frameToDraw.height);            
+    public void text(String text, Frame frame) {
+        if (text != null && frame != null){
+            Frame cropped = layerCroppedFrame(frame);
+            this.app.text(text, 
+                cropped.x, 
+                cropped.y, 
+                cropped.width, 
+                cropped.height);            
         }
     }
 

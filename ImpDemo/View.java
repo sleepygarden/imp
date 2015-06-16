@@ -44,7 +44,7 @@ class View extends Object {
         imp.stroke(strokeForState());
         imp.strokeWeight(this.strokeWeight);
         imp.fill(fillForState());
-        imp.rect(this);
+        imp.rect(this.frame);
     }
 
     public void updateMouse(ImpLayer imp){

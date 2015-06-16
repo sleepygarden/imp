@@ -27,6 +27,10 @@ class Label extends View {
         imp.textFont(this.font);
         imp.fill(this.textColor);
         imp.textAlign(this.hAlignment,this.vAlignment);
-        imp.text(this);
+        imp.text(this.stringForRender(),this.frame);
+    }
+
+    protected String stringForRender() {
+        return this.text;
     }
 }
