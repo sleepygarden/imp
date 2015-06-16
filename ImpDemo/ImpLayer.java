@@ -1,18 +1,15 @@
 import processing.core.*;
 
 public class ImpLayer extends Object {
-    public final int x,y,layerWidth,layerHeight;
+    public final Frame layerFrame;
     public final PApplet app;
     public final View background;
 
     public boolean clipsToBounds;
     
-    public ImpLayer(PApplet app, int x, int y, int width, int height, int fps){
+    public ImpLayer(PApplet app, int x, int y, int width, int height){
         this.app = app;
-        this.x = x;
-        this.y = y;
-        this.layerWidth = 300;
-        this.layerHeight = 300;
+        this.layerFrame = new Frame(x,y,width,height);
         this.background = new View(0,0,width,height);
         this.clipsToBounds = true;
     }
@@ -61,35 +58,28 @@ public class ImpLayer extends Object {
 
     public void rect(View v){
         if (v != null){
-            float width = v.width;
-            float height = v.height;
+            Frame frameToDraw = new Frame(v.frame);
 
             if (this.clipsToBounds){
-                if (this.layerWidth < width + v.x){
-                    width = this.layerWidth;
-                }
-                if (this.layerHeight < height + v.y){
-                    height = this.layerHeight;
+                if (!this.layerFrame.containsFrame(frameToDraw)) {
+                    frameToDraw.cropToFit(this.layerFrame);
                 }
             }
             
-            this.app.rect(this.x + v.x, this.y + v.y, width, height);            
+            this.app.rect(this.layerFrame.x + frameToDraw.x, this.layerFrame.y + frameToDraw.y, frameToDraw.width, frameToDraw.height);            
         }
     }
 
     public void text(Label l) {
         if (l != null){
-            float width = l.width;
-            float height = l.height;
+            Frame frameToDraw = new Frame(l.frame);
+
             if (this.clipsToBounds){
-                if (this.layerWidth < width + l.x){
-                    width = this.layerWidth;
-                }
-                if (this.layerHeight < height + l.y){
-                    height = this.layerHeight;
+                if (!this.layerFrame.containsFrame(frameToDraw)) {
+                    frameToDraw.cropToFit(this.layerFrame);
                 }
             }
-            this.app.text(l.text, this.x + l.x, this.y + l.y, width, height);
+            this.app.text(l.text, this.layerFrame.x + frameToDraw.x, this.layerFrame.y + frameToDraw.y, frameToDraw.width, frameToDraw.height);            
         }
     }
 

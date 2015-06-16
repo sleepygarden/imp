@@ -9,8 +9,8 @@ public class MyImpLayer extends ImpLayer {
 
     final TextField textField;
     
-    public MyImpLayer(PApplet app, int x, int y, int width, int height, int fps){
-        super(app,x,y,width,height,fps);
+    public MyImpLayer(PApplet app, int x, int y, int width, int height){
+        super(app,x,y,width,height);
         this.background.fill = new Color(255,100);
 
         this.view = new View(0,0,100,100);

@@ -2,7 +2,7 @@ import processing.core.*;
 
 class View extends Object {
 
-    public float x,y,width,height;
+    public Frame frame;
 
     public Color fill;
     public Color hovorFill;
@@ -17,22 +17,12 @@ class View extends Object {
         this.strokeWeight = 0;
         this.fill = new Color(255);
         this.stroke = new Color(255);
-        this.x = 0;
-        this.y = 0;
-        this.width = 0;
-        this.height = 0;
+        this.frame = new Frame(0,0,0,0);
     }
 
     public View(float x, float y, float width, float height){
         this();
-        setFrame(x,y,width,height);
-    }
-
-    public void setFrame(float x, float y, float w, float h){
-        this.x = x;
-        this.y = y;
-        this.width = w;
-        this.height = h;
+        this.frame = new Frame(x,y,width,height);
     }
 
     protected Color fillForState() {
@@ -58,9 +48,9 @@ class View extends Object {
     }
 
     public void updateMouse(ImpLayer imp){
-        this.isHovered = (imp.app.mouseX >= this.x + imp.x &&
-                          imp.app.mouseX <= this.x + this.width + imp.x && 
-                          imp.app.mouseY >= this.y + imp.y && 
-                          imp.app.mouseY <= this.y + this.height + imp.y);
+        this.isHovered = (imp.app.mouseX >= this.frame.x + imp.layerFrame.x &&
+                          imp.app.mouseX <= this.frame.x + this.frame.width + imp.layerFrame.x && 
+                          imp.app.mouseY >= this.frame.y + imp.layerFrame.y && 
+                          imp.app.mouseY <= this.frame.y + this.frame.height + imp.layerFrame.y);
     }
 }
