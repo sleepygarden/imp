@@ -1,6 +1,6 @@
-import processing.core.*;
+package com.sleepygarden.imp;
 
-class Button extends Label {
+public class Button extends Label {
 
     public boolean isDown;
     public boolean isInFocus;
@@ -8,7 +8,7 @@ class Button extends Label {
     public Color downFill;
     public Color downStroke;
 
-    protected MouseEventResponder mouseEventResponder;
+    public MouseEventResponder mouseEventResponder;
 
     public Button(float x, float y, float width, float height){
         super(x,y,width,height);
@@ -65,4 +65,7 @@ class Button extends Label {
     public void willLoseFocus() {
         this.isInFocus = false; 
     }
+
+    public void keyPressed(char key, int keyCode){ }
+    public void keyReleased(char key, int keyCode){ }
 }

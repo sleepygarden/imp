@@ -1,4 +1,6 @@
-class FocusManager extends Object {
+package com.sleepygarden.imp;
+
+public class FocusManager extends Object {
     public Button focusedView;
 
     private static FocusManager sharedManager;

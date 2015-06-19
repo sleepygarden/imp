@@ -1,6 +1,8 @@
-import processing.core.*;
+package com.sleepygarden.imp;
 
-class View extends Object {
+import processing.core.PConstants;
+
+public class View implements PConstants {
 
     public Frame frame;
 

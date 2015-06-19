@@ -1,4 +1,6 @@
-class Frame extends Object {
+package com.sleepygarden.imp;
+
+public class Frame extends Object {
     float x, y, width, height;
 
     public Frame(float x, float y, float w, float h){

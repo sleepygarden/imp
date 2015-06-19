@@ -1,4 +1,6 @@
-class Color {
+package com.sleepygarden.imp;
+
+public class Color {
     public int red, green, blue;
     float alpha;
     public Color (int red, int green, int blue){

@@ -1,22 +1,70 @@
-import processing.core.*;
+package com.sleepygarden.imp;
 
-public class ImpLayer extends Object {
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PFont;
+import processing.event.KeyEvent;
+import processing.event.MouseEvent;
+
+public class ImpLayer implements PConstants {
     public final Frame layerFrame;
     public final PApplet app;
     public final View background;
 
     public boolean clipsToBounds;
 
+    public int mouseX;
+    public int mouseY;
+    public boolean mousePressed;
+
     public static int cursorBlinkRate = 530;
+
+
     
     public ImpLayer(PApplet app, int x, int y, int width, int height){
         this.app = app;
         this.layerFrame = new Frame(x,y,width,height);
         this.background = new View(0,0,width,height);
         this.clipsToBounds = true;
+        registerImp();
     }
-    
-    public void setup() { }
+
+    public void registerImp() {
+        this.app.registerMethod("mouseEvent", this);
+        this.app.registerMethod("keyEvent", this);
+    }
+
+    public void mouseEvent(MouseEvent event) {
+        this.mouseX = event.getX();
+        this.mouseY = event.getY();
+
+        if (event.getAction() == MouseEvent.PRESS) {
+            this.mousePressed = true;
+        }
+        else if (event.getAction() == MouseEvent.RELEASE) {
+            this.mousePressed = false;
+        }
+    }
+
+    public void keyEvent(KeyEvent event){
+        if (event.getAction() == KeyEvent.TYPE){
+            return;
+        }
+
+        int keyCode = event.getKeyCode();
+        char key = event.getKey();
+
+        if (event.getAction() == KeyEvent.PRESS){
+            keyPressed(key,keyCode);
+        }
+        else {
+            keyReleased(key,keyCode);
+        }
+    }
+
+    public void setup() { 
+
+    }
     public void draw() { 
         this.background.draw(this);
     }
@@ -31,16 +79,16 @@ public class ImpLayer extends Object {
     // ------------------
     // Key Events
     // ------------------
-    public void keyPressed() {
+    public void keyPressed(char key, int keyCode) {
         Button focusedView = FocusManager.sharedManager().focusedView;
-        if (focusedView != null && focusedView instanceof TextField) {
-            ((TextField)focusedView).keyPressed(this.app);
+        if (focusedView != null) {
+            focusedView.keyPressed(key,keyCode);
         }
     }
-    public void keyReleased() {
+    public void keyReleased(char key, int keyCode) {
         Button focusedView = FocusManager.sharedManager().focusedView;
-        if (focusedView != null && focusedView instanceof TextField) {
-            ((TextField)focusedView).keyReleased(this.app);
+        if (focusedView != null) {
+            focusedView.keyReleased(key, keyCode);
         }
     }
 
@@ -52,6 +100,8 @@ public class ImpLayer extends Object {
     public void mouseReleased() {}
     public void mouseMoved() {}
     public void mouseDragged() {}
+
+
 
 
     // ------------------

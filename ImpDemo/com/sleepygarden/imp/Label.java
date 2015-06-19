@@ -1,6 +1,9 @@
-import processing.core.*;
+package com.sleepygarden.imp;
 
-class Label extends View {
+import processing.core.PApplet;
+import processing.core.PFont;
+
+public class Label extends View {
     
     public PFont font;
     public String text;
