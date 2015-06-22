@@ -16,6 +16,8 @@ public class MyImpLayer extends ImpLayer {
     
     public MyImpLayer(PApplet app, int x, int y, int width, int height){
         super(app,x,y,width,height);
+        this.clipsToBounds = false;
+
         this.background.fill = new Color(200,255);
 
         this.view = new View(0,0,100,100);
@@ -41,7 +43,7 @@ public class MyImpLayer extends ImpLayer {
             }
         });
         this.button.text = "Click me!";
-        this.button.hovorFill = new Color(122);
+        this.button.hovorFill = new Color(122,233,144,200);
         this.button.downFill = new Color(88);
 
         this.textField = new TextField(300,300,80,40);
@@ -61,8 +63,8 @@ public class MyImpLayer extends ImpLayer {
         this.label.font = createFont("Mermaid-Bold",20);
     }
 
-    public void draw() {
-        super.draw();
+    public void impdraw() {
+        super.impdraw();
         this.view.draw(this);
         this.label.draw(this);
         this.button.draw(this);

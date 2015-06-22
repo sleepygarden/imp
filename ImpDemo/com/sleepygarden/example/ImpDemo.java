@@ -4,6 +4,7 @@ import processing.core.PApplet;
 
 /**
  * Created by mcornell on 6/19/15.
+ *
  */
 
 public class ImpDemo extends PApplet {
@@ -23,6 +24,9 @@ public class ImpDemo extends PApplet {
     }
     public void draw() {
         background(255);
+        pushMatrix();
+        rotate(PI/360 * -45);
         imp.draw();
+        popMatrix();
     }
 }

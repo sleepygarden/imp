@@ -17,6 +17,11 @@ public class Frame extends Object {
         this.height = toCopy.height;
     }
 
+    public float x1() { return this.x; }
+    public float y1() { return this.y; }
+    public float x2() { return this.x + this.width; }
+    public float y2() { return this.y + this.height; }
+
     public boolean containsFrame(Frame subframe){
         return (subframe.x >= this.x &&
             subframe.y >= this.y &&
@@ -25,8 +30,8 @@ public class Frame extends Object {
     }
 
     public void cropToFit(Frame fit){
-        if ((this.x > fit.x && this.y > fit.y) ||
-            (this.x + this.width < fit.x && this.y + this.height < fit.y)) { // it's totally off the screen
+        if ((this.x1() > fit.x2() && this.y1() > fit.y2()) ||
+            (this.x2() < fit.x1() && this.y2() < fit.y1())) { // it's totally off the screen
             this.x = 0;
             this.y = 0;
             this.width = 0;
