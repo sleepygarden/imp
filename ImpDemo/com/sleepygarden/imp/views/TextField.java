@@ -1,7 +1,16 @@
-package com.sleepygarden.imp;
+package com.sleepygarden.imp.views;
+
+import com.sleepygarden.imp.pojo.Color;
+import com.sleepygarden.imp.FocusManager;
+import com.sleepygarden.imp.ImpLayer;
+import com.sleepygarden.imp.pojo.Frame;
+
+/**
+ * Created by mcornell on 6/22/15.
+ *
+ */
 
 public class TextField extends Button {
-
     public Color focusFill;
     public Color focusStroke;
 
@@ -10,8 +19,7 @@ public class TextField extends Button {
 
     public TextField(float x, float y, float width, float height){
         super(x,y,width,height);
-        this.stroke = new Color(200);
-        this.strokeWeight = 1;
+        Template().TextField.style(this);
     }
 
     protected Color fillForState() {

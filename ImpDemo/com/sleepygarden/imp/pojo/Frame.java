@@ -1,7 +1,13 @@
-package com.sleepygarden.imp;
+package com.sleepygarden.imp.pojo;
+
+/**
+ * Created by mcornell on 6/22/15.
+ *
+ */
 
 public class Frame extends Object {
-    float x, y, width, height;
+    public float x, y, width, height;
+    public static final Frame FrameZero = new Frame(0,0,0,0);
 
     public Frame(float x, float y, float w, float h){
         this.x = x;
@@ -17,10 +23,10 @@ public class Frame extends Object {
         this.height = toCopy.height;
     }
 
-    public float x1() { return this.x; }
-    public float y1() { return this.y; }
     public float x2() { return this.x + this.width; }
     public float y2() { return this.y + this.height; }
+    public Point origin() { return new Point(this.x, this.y); }
+    public Point size() { return new Point(this.width, this.height); }
 
     public boolean containsFrame(Frame subframe){
         return (subframe.x >= this.x &&
@@ -30,8 +36,8 @@ public class Frame extends Object {
     }
 
     public void cropToFit(Frame fit){
-        if ((this.x1() > fit.x2() && this.y1() > fit.y2()) ||
-            (this.x2() < fit.x1() && this.y2() < fit.y1())) { // it's totally off the screen
+        if ((this.x > fit.x2() && this.y > fit.y2()) ||
+            (this.x2() < fit.x && this.y2() < fit.y)) { // it's totally off the screen
             this.x = 0;
             this.y = 0;
             this.width = 0;
@@ -58,5 +64,10 @@ public class Frame extends Object {
         if (this.y + this.height > fit.height){
             this.height = fit.height - this.y;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "(("+this.x+","+this.y+"),("+this.width+","+this.height+"))";
     }
 }

@@ -1,5 +1,12 @@
 package com.sleepygarden.imp;
 
+import com.sleepygarden.imp.views.Button;
+
+/**
+ * Created by mcornell on 6/22/15.
+ *
+ */
+
 public class FocusManager extends Object {
     public Button focusedView;
 

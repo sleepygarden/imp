@@ -1,27 +1,25 @@
-package com.sleepygarden.imp;
+package com.sleepygarden.imp.pojo;
 
-import java.awt.geom.Path2D;
 import java.util.Arrays;
 
 /**
  * Created by mcornell on 6/22/15.
  *
  */
+
 public class Polygon {
 
     public Point[] points;
-    private Path2D path;
     public Polygon(Point[] points){
         this.points = points;
-        this.path = new Path2D.Float();
     }
 
     public Polygon(Frame frame){
-        this.points = new Point[]{new Point(frame.x1(), frame.y1()),
-                new Point(frame.x2(),frame.y1()),
+        this.points = new Point[]{
+                new Point(frame.x, frame.y),
+                new Point(frame.x2(),frame.y),
                 new Point(frame.x2(),frame.y2()),
-                new Point(frame.x1(),frame.y2())};
-        this.path = new Path2D.Float();
+                new Point(frame.x,frame.y2())};
     }
 
     // horizontal ray cast
@@ -68,46 +66,3 @@ public class Polygon {
         return "Polygon:(\n" + Arrays.toString(this.points) +"\n)";
     }
 }
-
-/*
-
-    public final Point[] points;
-    private Path2D path;
-    public Polygon(Point[] points){
-        this.points = points;
-        this.path = new Path2D.Float();
-        updatePath();
-    }
-
-    public Polygon(Frame frame){
-        this.points = new Point[]{new Point(frame.x1(), frame.y1()),
-                new Point(frame.x2(),frame.y1()),
-                new Point(frame.x2(),frame.y2()),
-                new Point(frame.x1(),frame.y2())};
-        this.path = new Path2D.Float();
-        updatePath();
-    }
-
-    private void updatePath() {
-        if (this.points != null && this.points.length > 3) {
-            this.path.moveTo(this.points[0].x, this.points[0].y);
-            for (int idx = 0; idx < points.length; idx++) {
-                this.path.lineTo(this.points[idx].x, this.points[idx].y);
-            }
-            this.path.closePath();
-        }
-    }
-
-    public boolean contains(Point p){
-        return this.contains(p.x,p.y);
-    }
-
-    public boolean contains(float x, float y){
-        if (this.points == null || this.path == null || this.points.length < 2){
-            return false;
-        }
-        return this.path.contains(x,y);
-    }
-
-
- */

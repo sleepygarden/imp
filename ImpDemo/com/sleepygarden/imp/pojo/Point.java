@@ -1,4 +1,4 @@
-package com.sleepygarden.imp;
+package com.sleepygarden.imp.pojo;
 
 /**
  * Created by mcornell on 6/22/15.
@@ -6,6 +6,8 @@ package com.sleepygarden.imp;
  */
 
 public class Point {
+
+    public static final Point PointZero = new Point(0,0);
     public float x, y;
     public Point(float x, float y){
         this.x = x;

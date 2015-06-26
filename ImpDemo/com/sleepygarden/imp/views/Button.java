@@ -1,4 +1,13 @@
-package com.sleepygarden.imp;
+package com.sleepygarden.imp.views;
+
+import com.sleepygarden.imp.*;
+import com.sleepygarden.imp.pojo.Color;
+import com.sleepygarden.imp.pojo.Frame;
+
+/**
+ * Created by mcornell on 6/22/15.
+ *
+ */
 
 public class Button extends Label {
 
@@ -12,11 +21,9 @@ public class Button extends Label {
 
     public Button(float x, float y, float width, float height){
         super(x,y,width,height);
-    }
-
-    public Button(MouseEventResponder mouseEventResponder){
-        super();
-        this.mouseEventResponder = mouseEventResponder;
+        Template().Button.style(this);
+        this.frame = new Frame(x,y,width,height);
+        resizeTextFrame();
     }
 
     public void setMouseEventResponder(MouseEventResponder responder) {
@@ -54,7 +61,7 @@ public class Button extends Label {
             this.isDown = imp.app.mousePressed;
         }
         else {
-            // if already down, did drag out, but we arent implementing an action for that
+            // if isDown, did drag out, unimplemented for brevity
             this.isDown = false;
         }
     }

@@ -1,8 +1,13 @@
-package com.sleepygarden.imp;
+package com.sleepygarden.imp.pojo;
+
+/**
+ * Created by mcornell on 6/22/15.
+ *
+ */
 
 public class Color {
     public int red, green, blue;
-    float alpha;
+    public float alpha;
     public Color (int red, int green, int blue){
         this.alpha = 255;
         this.red = red;

@@ -1,35 +1,39 @@
 package com.sleepygarden.imp;
 
+import com.sleepygarden.imp.pojo.Color;
+import com.sleepygarden.imp.pojo.Point;
+import com.sleepygarden.imp.pojo.Polygon;
+import com.sleepygarden.imp.views.Button;
+import com.sleepygarden.imp.pojo.Frame;
+import com.sleepygarden.imp.views.View;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.event.KeyEvent;
 import processing.event.MouseEvent;
 
+import java.util.HashMap;
+
+/**
+ * Created by mcornell on 6/22/15.
+ *
+ */
+
 public class ImpLayer implements PConstants {
 
-    public final Frame layerFrame;
+    private static HashMap<ImpFont,PFont> impFontCache = new HashMap<>();
+
     public final PApplet app;
-    public final View background;
+    public final View view;
 
-    public boolean clipsToBounds;
-
-    public int mouseX;
-    public int mouseY;
+    public int mouseX, mouseY;
     public boolean mousePressed;
 
-    public boolean isTransformed;
-
-    public PFont defaultFont;
-
     public static int cursorBlinkRate = 530;
-    
+
     public ImpLayer(PApplet app, int x, int y, int width, int height){
         this.app = app;
-        this.layerFrame = new Frame(x,y,width,height);
-        this.background = new View(0,0,width,height);
-        this.clipsToBounds = true;
-        this.isTransformed = false;
+        this.view = new View(x, y, width, height);
         registerImp();
     }
 
@@ -38,23 +42,49 @@ public class ImpLayer implements PConstants {
         this.app.registerMethod("keyEvent", this);
     }
 
-    public void impdraw() {
-        this.background.draw(this);
+    private void recursiveUpdate(View view, boolean superIsHovered){
+        pushStyle();
+        pushMatrix();
+        {
+            this.app.translate(view.frame.x, view.frame.y);
+
+            if (superIsHovered){
+                view.updateMouse(this);
+                superIsHovered = view.isHovered;
+            }
+            else {
+                view.isHovered = false;
+            }
+
+            view.impdraw(this);
+            for (View subview : view.subviews()){
+                recursiveUpdate(subview, superIsHovered);
+            }
+        }
+        popMatrix();
+        popStyle();
+
     }
 
     public void setup() {
-        echoFonts();
-        this.defaultFont = createFont("Helvetica",14);
+        ImpFont.echoFonts();
     }
 
     public void draw() {
-        this.app.pushMatrix();
+        pushStyle();
+        pushMatrix();
         {
-            this.app.translate(this.layerFrame.x, this.layerFrame.y);
-            this.isTransformed = isTransformedOnThisDraw();
-            impdraw();
+            this.app.hint(DISABLE_DEPTH_TEST);
+            this.app.camera();
+            this.app.noLights();
+
+            recursiveUpdate(this.view,true);
+
+            this.app.hint(ENABLE_DEPTH_TEST);
+
         }
-        this.app.popMatrix();
+        popMatrix();
+        popStyle();
     }
 
     // ------------------
@@ -106,92 +136,79 @@ public class ImpLayer implements PConstants {
     // Helpers
     // ------------------
 
-    public void echoFonts() {
-        String[] fontList = PFont.list();
-        for (String fontname : fontList){
-            System.out.println(fontname);
-        }
-    }
-
-    private Frame layerCroppedFrame(Frame frame){
-        if (frame != null){
-            Frame cropped = new Frame(frame);
-            if (this.clipsToBounds){
-                if (!this.background.frame.containsFrame(cropped)) {
-                    cropped.cropToFit(this.background.frame);
-                }
-            }
-            return cropped;
-        }
-        return new Frame(0,0,0,0);
-    }
-
     public Point transformedPoint(Point p){
-        float dX = this.app.screenX(p.x, p.y);
-        float dY = this.app.screenY(p.x, p.y);
+        float dX = this.screenX(p);
+        float dY = this.screenY(p);
         return new Point(dX,dY);
     }
 
     public Polygon transformedFrame(Frame f){
-        Polygon framePoly = new Polygon(f);
         return new Polygon(new Point[] {
-                transformedPoint(framePoly.points[0]),
-                transformedPoint(framePoly.points[1]),
-                transformedPoint(framePoly.points[2]),
-                transformedPoint(framePoly.points[3])
+                transformedPoint(new Point(f.x,f.y)),
+                transformedPoint(new Point(f.x2(),f.y)),
+                transformedPoint(new Point(f.x2(),f.y2())),
+                transformedPoint(new Point(f.x,f.y2()))
         });
-    }
-
-    private boolean isTransformedOnThisDraw() {
-        Polygon framePoly = new Polygon(this.layerFrame);
-        Polygon transPoly = transformedFrame(this.layerFrame);
-        return (!framePoly.equals(transPoly));
     }
 
     // ------------------
     // PApplet Helpers
     // ------------------
 
-    public void polygon(Polygon polygon){
-        this.app.beginShape();
-        for (Point p : polygon.points){
-            this.app.vertex(p.x, p.y);
-        }
-        this.app.endShape(CLOSE);
+    public void translate(Point p){
+        this.app.translate(p.x,p.y);
+    }
+
+    public void rectMode(int rectMode){
+        this.app.rectMode(rectMode);
+    }
+
+    public void pushStyle() {
+        this.app.pushStyle();
+    }
+    public void popStyle() {
+        this.app.popStyle();
+    }
+    public void pushMatrix() {
+        this.app.pushMatrix();
+    }
+    public void popMatrix() {
+        this.app.popMatrix();
+    }
+
+    public float textWidth(String text){
+        return this.app.textWidth(text);
+    }
+    public float textHeight(){
+        return this.app.textAscent() + this.app.textDescent();
     }
 
     public float screenX(Point p){
         return this.app.screenX(p.x,p.y);
     }
-
     public float screenY(Point p){
         return this.app.screenY(p.x,p.y);
     }
 
     public void rect(Frame frame){
         if (frame != null){
-            Frame cropped = layerCroppedFrame(frame);
-            this.app.rect(cropped.x, 
-                cropped.y, 
-                cropped.width, 
-                cropped.height);            
+            this.app.rect(frame.x,
+                    frame.y,
+                    frame.width,
+                    frame.height);
         }
     }
 
     public void text(String text, Frame frame) {
         if (text != null && frame != null){
-            Frame cropped = layerCroppedFrame(frame);
-            this.app.text(text, 
-                cropped.x, 
-                cropped.y, 
-                cropped.width, 
-                cropped.height);            
+            this.app.text(text,
+                    frame.x,
+                    frame.y,
+                    frame.width,
+                    frame.height);
         }
     }
 
-    public void textAlign(int hAlign){
-        this.app.textAlign(hAlign);
-    }
     public void textAlign(int hAlign, int vAlign){
         this.app.textAlign(hAlign, vAlign);
     }
@@ -227,7 +244,7 @@ public class ImpLayer implements PConstants {
             }
         }
         else {
-            this.app.noSmooth();
+            this.app.noStroke();
         }
     }
 
@@ -240,16 +257,30 @@ public class ImpLayer implements PConstants {
         }
     }
 
-    public void textFont(PFont font){
-        if (font != null){
-            this.app.textFont(font);
-        }
-        else {
-            this.app.textFont(this.defaultFont);
+    public void textFont(ImpFont impFont) {
+        if (impFont != null) {
+            PFont pFont = impFont.pfont;
+
+            if (pFont == null) {
+                pFont = impFontCache.get(impFont);
+
+                if (pFont == null) {
+                    if (impFont.loadsFromData) {
+                        pFont = this.app.loadFont(impFont.name);
+                    } else {
+                        pFont = this.app.createFont(impFont.name, impFont.size, impFont.antialias);
+                    }
+                }
+                if (pFont != null){
+                    impFont.pfont = pFont;
+                    impFontCache.put(impFont, pFont);
+                }
+            }
+            if (pFont != null) {
+                this.app.textFont(pFont,impFont.size);
+            }
         }
     }
-    public PFont loadFont(String filename){ return this.app.loadFont(filename); }
-    public PFont createFont(String fontname, int fontSize) { return this.app.createFont(fontname, fontSize, true); }
 }
 
 
