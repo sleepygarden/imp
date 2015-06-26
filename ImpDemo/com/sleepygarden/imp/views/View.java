@@ -17,7 +17,6 @@ import java.util.Arrays;
 
 public class View implements PConstants {
     public Frame frame;
-    public Frame bounds;
 
     public Color fill;
     public Color hoverFill;
@@ -33,12 +32,15 @@ public class View implements PConstants {
         super();
         this.subviews = new ArrayList<>();
         this.frame = new Frame(x,y,width,height);
-        this.bounds = new Frame(0,0,width,height);
         Template().View.style(this);
     }
 
     protected Templates Template() {
         return Templates.Templates();
+    }
+
+    public Frame bounds() {
+        return new Frame(0,0,this.frame.width,this.frame.height);
     }
 
     protected Color fillForState() {
@@ -59,11 +61,11 @@ public class View implements PConstants {
         imp.fill(fillForState());
         imp.stroke(strokeForState());
         imp.strokeWeight(this.strokeWeight);
-        imp.rect(this.bounds);
+        imp.rect(this.bounds());
     }
 
     public void updateMouse(ImpLayer imp){
-        Polygon transformedFrame = imp.transformedFrame(this.bounds);
+        Polygon transformedFrame = imp.transformedFrame(this.bounds());
         this.isHovered = transformedFrame.contains(imp.mouseX,imp.mouseY);
     }
 

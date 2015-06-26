@@ -92,8 +92,12 @@ public class Templates implements PConstants {
 
     public class SliderTemplate extends ButtonTemplate {
         public int value = 50;
+        public int minValue = 0;
+        public int maxValue = 100;
+
         public Color sliderIndicatorFill = new Color(50,50,50);
         public float indicatorSize = 30;
+
 
         public SliderTemplate() {
             super();
@@ -105,6 +109,8 @@ public class Templates implements PConstants {
         public void style(Slider slider){
             super.style(slider);
             slider.value = this.value;
+            slider.minValue = this.minValue;
+            slider.maxValue = this.maxValue;
             slider.sliderIndicatorFill = this.sliderIndicatorFill;
             slider.indicatorSize = this.indicatorSize;
         }

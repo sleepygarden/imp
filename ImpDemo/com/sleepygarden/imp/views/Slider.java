@@ -12,54 +12,64 @@ import com.sleepygarden.imp.pojo.Point;
  */
 
 public class Slider extends Button {
-    public float value;
+
+    public int minValue, maxValue, value;
+    public float floatValue;
     public Color sliderIndicatorFill;
 
-    private boolean isVertical;
     public float indicatorSize;
 
-    private Frame sliderIndicatorFrame;
-    private float minValueCoord, maxValueCoord;
-
-    private final int indicatorInset = 5;
-
     public SliderResponder sliderResponder;
+
+    protected Frame sliderIndicatorFrame;
+    protected int absoluteMinPos, absoluteMaxPos;
+    protected int relativeMinPos, relativeMaxPos;
+    protected boolean hasCalculatedAbsoluteMinMax;
+    protected final int indicatorInset = 5;
 
     public Slider(float x, float y, float width, float height){
         super(x,y,width,height);
         Template().Slider.style(this);
-        this.sliderIndicatorFrame = new Frame(x = this.indicatorSize/2 + this.indicatorInset,y,0,0);
-        this.setIsVertical(false);
-    }
-
-    public boolean isVertical(){
-        return this.isVertical;
-    }
-
-    public void setIsVertical(boolean isVertical){
-        this.isVertical = isVertical;
+        this.sliderIndicatorFrame = new Frame(this.indicatorSize/2 + this.indicatorInset,this.indicatorSize/2 + this.indicatorInset,0,0);
+        this.hasCalculatedAbsoluteMinMax = false;
         resizeIndicator();
+        this.floatValue = (this.value - this.minValue) / (this.maxValue - this.minValue);
+    }
 
-        if (this.isVertical){
-            this.minValueCoord = this.indicatorSize/2 + this.indicatorInset;
-            this.maxValueCoord = this.frame.height - this.indicatorSize/2 - this.indicatorInset;
-        }
-        else {
-            this.minValueCoord = this.indicatorSize/2 - this.indicatorInset;
-            this.maxValueCoord = this.frame.width - this.indicatorSize/2 - this.indicatorInset;
+    protected void measureAbsoluteMinMax(ImpLayer imp) {
+        if (!this.hasCalculatedAbsoluteMinMax){
+            this.relativeMinPos = (int)Math.floor(this.indicatorSize/2 + this.indicatorInset);
+            this.relativeMaxPos = (int)Math.floor(this.frame.width - this.indicatorSize/2 - this.indicatorInset);
+            Point minPoint = new Point(this.relativeMinPos, this.sliderIndicatorFrame.y);
+            Point maxPoint = new Point(this.relativeMaxPos, this.sliderIndicatorFrame.y);
+            this.absoluteMinPos = (int)Math.floor(imp.screenX(minPoint));
+            this.absoluteMaxPos = (int)Math.floor(imp.screenX(maxPoint));
+            this.hasCalculatedAbsoluteMinMax = true;
         }
     }
 
-    private void resizeIndicator() {
-        if (this.isVertical) {
-            this.sliderIndicatorFrame.width = this.frame.width - this.indicatorInset*2;
-            this.sliderIndicatorFrame.height = this.indicatorSize;
-            this.sliderIndicatorFrame.x = this.indicatorSize/2 + this.indicatorInset;
+    protected void resizeIndicator() {
+        this.sliderIndicatorFrame.width = this.indicatorSize;
+        this.sliderIndicatorFrame.height = this.frame.height - this.indicatorInset*2;
+    }
+
+    protected void updateSliderFrame() {
+        float newPosition = this.relativeMinPos + (this.relativeMaxPos - this.relativeMinPos) * this.floatValue;
+        this.sliderIndicatorFrame.x = newPosition;
+        this.sliderIndicatorFrame.y = this.relativeMinPos;
+    }
+
+    protected float calculateSliderValue(ImpLayer imp){
+        int mousePos = imp.mouseX;
+        measureAbsoluteMinMax(imp);
+        if (mousePos <= this.absoluteMinPos){
+            return 0;
+        }
+        else if (mousePos >= this.absoluteMaxPos) {
+            return 1;
         }
         else {
-            this.sliderIndicatorFrame.width = this.indicatorSize;
-            this.sliderIndicatorFrame.height = this.frame.height - this.indicatorInset*2;
-            this.sliderIndicatorFrame.y = this.indicatorSize/2 + this.indicatorInset;
+            return (float)(mousePos - this.absoluteMinPos) / (float)(this.absoluteMaxPos - this.absoluteMinPos);
         }
     }
 
@@ -79,46 +89,15 @@ public class Slider extends Button {
     public void updateMouse(ImpLayer imp){
         super.updateMouse(imp);
         if (this.isDown){
-            float mousePos, absoluteMin, absoluteMax;
-            float newValue;
-            if (this.isVertical){
-                absoluteMin = imp.screenY(new Point(this.sliderIndicatorFrame.x,this.minValueCoord));
-                absoluteMax = imp.screenY(new Point(this.sliderIndicatorFrame.x,this.maxValueCoord));
-                mousePos = imp.mouseY;
-            }
-            else {
-                absoluteMin = imp.screenX(new Point(this.minValueCoord, this.sliderIndicatorFrame.y));
-                absoluteMax = imp.screenX(new Point(this.maxValueCoord, this.sliderIndicatorFrame.y));
-                mousePos = imp.mouseX;
-            }
-            if (mousePos <= absoluteMin){
-                newValue = 0;
-            }
-            else if (mousePos >= absoluteMax) {
-                newValue = 1;
-            }
-            else {
-                newValue = (mousePos - this.minValueCoord) / (this.maxValueCoord - this.minValueCoord) * 100;
-            }
-            if (this.value != newValue) {
-                this.value = newValue;
+            float newValue = calculateSliderValue(imp);
+            if (this.floatValue != newValue) {
+                this.floatValue = newValue;
+                this.value = (int)(this.floatValue * (this.maxValue - this.minValue) + this.minValue);
                 if (this.sliderResponder != null) {
                     this.sliderResponder.sliderDidUpdate(this, this.value);
                 }
-                updateSliderFrame();
             }
-        }
-    }
-
-    private void updateSliderFrame() {
-
-        float newPosition = (this.maxValueCoord - this.minValueCoord) * this.value  / 100 + this.minValueCoord;
-
-        if (this.isVertical){
-            this.sliderIndicatorFrame.y = newPosition;
-        }
-        else {
-            this.sliderIndicatorFrame.x = newPosition;
+            updateSliderFrame();
         }
     }
 }

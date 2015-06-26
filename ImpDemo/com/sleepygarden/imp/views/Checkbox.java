@@ -2,6 +2,7 @@ package com.sleepygarden.imp.views;
 
 import com.sleepygarden.imp.CheckboxResponder;
 import com.sleepygarden.imp.ImpLayer;
+import com.sleepygarden.imp.Logger;
 import com.sleepygarden.imp.MouseEventResponder;
 import com.sleepygarden.imp.pojo.Color;
 import com.sleepygarden.imp.pojo.Frame;
@@ -16,7 +17,7 @@ public class Checkbox extends Button {
     public Color checkedFill;
 
     private Frame checkFrame;
-    private final int checkInset = 10;
+    private final int checkInset = 5;
 
     public CheckboxResponder checkboxResponder;
 
@@ -41,6 +42,8 @@ public class Checkbox extends Button {
                 this.checkInset,
                 this.frame.width - this.checkInset*2,
                 this.frame.height - this.checkInset*2);
+
+        System.out.println("frame = " + this.frame.toString());
     }
 
     public void impdraw(ImpLayer imp){

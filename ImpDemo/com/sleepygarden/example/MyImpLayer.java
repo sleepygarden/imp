@@ -20,6 +20,7 @@ public class MyImpLayer extends ImpLayer {
     final Checkbox checkbox;
 
     final Slider slider;
+    final VerticalSlider vSlider;
 
     final View simpleView;
     
@@ -52,8 +53,16 @@ public class MyImpLayer extends ImpLayer {
         this.slider = new Slider(200,500,200,40);
         this.slider.sliderResponder = new SliderResponder() {
             @Override
-            public void sliderDidUpdate(Slider slider, float value) {
+            public void sliderDidUpdate(Slider slider, int value) {
                 System.out.println("slider did update value to "+value);
+            }
+        };
+
+        this.vSlider = new VerticalSlider(150,450,40,200);
+        this.vSlider.sliderResponder = new SliderResponder() {
+            @Override
+            public void sliderDidUpdate(Slider slider, int value) {
+                System.out.println("vSlider did update value to "+value);
             }
         };
 
@@ -81,12 +90,13 @@ public class MyImpLayer extends ImpLayer {
         this.textField = new TextField(300,300,80,40);
         this.textField.text = "Edit me";
 
-        //this.view.addSubview(this.simpleView);
-        //this.view.addSubview(this.label);
-        //this.view.addSubview(this.button);
-        //this.view.addSubview(this.textField);
-        //this.view.addSubview(this.slider);
+        this.view.addSubview(this.simpleView);
+        this.view.addSubview(this.label);
+        this.view.addSubview(this.button);
+        this.view.addSubview(this.textField);
+        this.view.addSubview(this.slider);
         this.view.addSubview(this.checkbox);
+        this.view.addSubview(this.vSlider);
 
     }
 }

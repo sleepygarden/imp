@@ -7,5 +7,5 @@ import com.sleepygarden.imp.views.Slider;
  *
  */
 public interface SliderResponder {
-    void sliderDidUpdate(Slider slider, float value);
+    void sliderDidUpdate(Slider slider, int value);
 }

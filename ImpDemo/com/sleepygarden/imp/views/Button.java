@@ -22,8 +22,6 @@ public class Button extends Label {
     public Button(float x, float y, float width, float height){
         super(x,y,width,height);
         Template().Button.style(this);
-        this.frame = new Frame(x,y,width,height);
-        resizeTextFrame();
     }
 
     public void setMouseEventResponder(MouseEventResponder responder) {

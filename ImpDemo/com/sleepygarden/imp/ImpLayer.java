@@ -71,6 +71,7 @@ public class ImpLayer implements PConstants {
     }
 
     public void draw() {
+        Logger.startFrame(this.app.frameCount);
         pushStyle();
         pushMatrix();
         {
@@ -85,6 +86,7 @@ public class ImpLayer implements PConstants {
         }
         popMatrix();
         popStyle();
+        Logger.nextFrame();
     }
 
     // ------------------

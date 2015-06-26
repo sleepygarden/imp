@@ -29,7 +29,16 @@ public class ImpDemo extends PApplet {
 
         pushMatrix();
         imp.draw();
+
+        translate(300,300);
+
+        rotateX(radians(45));
+        rotateY(radians(35));
+        rotateZ(radians(25));
+
+        box(100);
         popMatrix();
+
 
         //text("Framerate: "+frameRate,8,appHeight-8);
     }
